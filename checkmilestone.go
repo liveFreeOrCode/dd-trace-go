@@ -3,6 +3,7 @@
 // This product includes software developed at Datadog (https://www.datadoghq.com/).
 // Copyright 2016 Datadog, Inc.
 
+//go:build ignore
 // +build ignore
 
 // This tool validates that the PR at the given URL has a milestone set.
@@ -20,11 +21,11 @@ import (
 )
 
 func main() {
-	prURL, ok := os.LookupEnv("CIRCLE_PULL_REQUEST")
-	if !ok {
-		fmt.Println("CIRCLE_PULL_REQUEST not set")
-		os.Exit(0)
-	}
+	// 	prURL, ok := os.LookupEnv("CIRCLE_PULL_REQUEST")
+	// 	if !ok {
+	// 		fmt.Println("CIRCLE_PULL_REQUEST not set")
+	// 		os.Exit(0)
+	// 	}
 	exit := func(err error) {
 		fmt.Println(err)
 		os.Exit(1)
@@ -52,4 +53,5 @@ func main() {
 	if data.Milestone == nil {
 		exit(errors.New("Milestone not set."))
 	}
+	fmt.Println("Milestone check passed.")
 }

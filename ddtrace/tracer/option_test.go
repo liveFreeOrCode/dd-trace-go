@@ -43,6 +43,22 @@ func withTickChan(ch <-chan time.Time) StartOption {
 func testStatsd(t *testing.T, cfg *config, addr string) {
 	client := cfg.statsd
 	require.Equal(t, addr, cfg.dogstatsdAddr)
+	_, err := net.ResolveUDPAddr("udp", addr)
+	require.NoError(t, err)
+
+	client.Count("name", 1, []string{"tag"}, 1)
+	require.NoError(t, client.Close())
+}
+
+func TestStatsdUDPConnect(t *testing.T) {
+	defer func(old string) { os.Setenv("DD_DOGSTATSD_PORT", old) }(os.Getenv("DD_DOGSTATSD_PORT"))
+	os.Setenv("DD_DOGSTATSD_PORT", "8111")
+	testStatsd(t, newConfig(), net.JoinHostPort(defaultHostname, "8111"))
+	cfg := newConfig()
+	addr := net.JoinHostPort(defaultHostname, "8111")
+
+	client := cfg.statsd
+	require.Equal(t, addr, cfg.dogstatsdAddr)
 	udpaddr, err := net.ResolveUDPAddr("udp", addr)
 	require.NoError(t, err)
 	conn, err := net.ListenUDP("udp", udpaddr)
@@ -210,7 +226,7 @@ func TestTracerOptionsDefaults(t *testing.T) {
 		assert := assert.New(t)
 		c := newConfig()
 		assert.Equal(float64(1), c.sampler.(RateSampler).Rate())
-		assert.Equal("tracer.test", c.serviceName)
+		assert.Regexp(`tracer\.test(\.exe)?`, c.serviceName)
 		assert.Equal("localhost:8126", c.agentAddr)
 		assert.Equal("localhost:8125", c.dogstatsdAddr)
 		assert.Nil(nil, c.httpClient)

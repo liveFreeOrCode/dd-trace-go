@@ -98,6 +98,9 @@ func TestTryUpload(t *testing.T) {
 }
 
 func TestTryUploadUDS(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Cannot test unix sockets on Windows")
+	}
 	srv := startSocketTestServer(t, 200)
 	defer srv.close()
 	p, err := unstartedProfiler(
