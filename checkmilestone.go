@@ -14,9 +14,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"net/url"
 	"os"
-	"path"
 	"strconv"
 )
 
@@ -30,12 +28,12 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	u, err := url.Parse(prURL)
-	if err != nil {
-		exit(err)
-	}
-	base := path.Base(u.Path)
-	pr, err := strconv.Atoi(base)
+	//u, err := url.Parse(prURL)
+	// 	if err != nil {
+	// 		exit(err)
+	// 	}
+	// 	base := path.Base(u.Path)
+	pr, err := strconv.Atoi(os.Getenv("PR_NUMBER"))
 	if err != nil {
 		exit(err)
 	}
