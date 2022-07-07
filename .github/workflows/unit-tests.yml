@@ -122,8 +122,6 @@ jobs:
       matrix:
         runs-on: [ macos-latest, windows-latest ]
         go-version: ["1.16", "1.17", "1.18"]
-#        runs-on: [ windows-latest ]
-#        go-version: ["1.18"]
       fail-fast: false
     runs-on: ${{ matrix.runs-on }}
     env:
