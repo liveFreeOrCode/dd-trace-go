@@ -162,9 +162,9 @@ jobs:
       - name: "Runner ${{ matrix.runner-index }}: Test Core and Contrib (No Integration Tests)"
         shell: bash
         run: |
-            PACKAGE_NAMES=$(go list ./... | grep -v -e grpc.v12 -e google.golang.org/api -e sarama -e confluent-kafka-go)
-            echo PACKAGE NAMES: $PACKAGE_NAMES
-            npkgs=$(echo $PACKAGE_NAMES | wc -l)
+            go list ./... | grep -v -e grpc.v12 -e google.golang.org/api -e sarama -e confluent-kafka-go >packages.txt
+            echo PACKAGE NAMES: $(cat packages.txt)
+            npkgs=$(cat packages.txt | wc -l)
             echo NUMBER OF PACKAGES: $npkgs
             #gotestsum --junitfile ${REPORT} -- $PACKAGE_NAMES -v -coverprofile=coverage.txt -covermode=atomic
 
