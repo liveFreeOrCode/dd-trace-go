@@ -11,7 +11,7 @@ on:
       - "**"
 
 env:
-  total-runners: 5
+  total-runners: 1
 
 jobs:
   runner-indexes:
@@ -83,7 +83,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: ["1.16", "1.17", "1.18"]
+        #go-version: ["1.16", "1.17", "1.18"]
+        go-version: ["1.18"]
       fail-fast: false
     env:
        TEST_RESULTS: /tmp/test-results # path to where test results will be saved
@@ -138,10 +139,10 @@ jobs:
       - runner-indexes
     strategy:
       matrix:
-        runs-on: [ macos-latest, windows-latest, ubuntu-latest ]
-        go-version: ["1.16", "1.17", "1.18"]
-        #runs-on: [ macos-latest, windows-latest ]
-        #go-version: ["1.18"]
+        #runs-on: [ macos-latest, windows-latest, ubuntu-latest ]
+        #go-version: ["1.16", "1.17", "1.18"]
+        runs-on: [ windows-latest ]
+        go-version: ["1.18"]
         runner-index: ${{ fromjson(needs.runner-indexes.outputs.json) }}
       fail-fast: false
     runs-on: ${{ matrix.runs-on }}
@@ -173,6 +174,7 @@ jobs:
             else
                 split -l${psplit} -d packages.txt
             fi
+            ls x*
             gotestsum --junitfile ${REPORT} -- $(cat x0${{ matrix.runner-index }}) -v -coverprofile=coverage.txt -covermode=atomic
 
       - name: Upload the results to Datadog CI App
