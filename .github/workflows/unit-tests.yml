@@ -170,7 +170,11 @@ jobs:
             npkgs=$(cat packages.txt | wc -l)
             echo NUMBER OF PACKAGES: $npkgs
             echo PACKAGES PER RUNNER: $(($npkgs / ${{ env.total-runners}}))
-            split -l10 -d packages.txt
+            if [[ $RUNNER_OS == "macOS-latest" ]]; then
+                gsplit -l10 -d packages.txt
+            else
+                split -l10 -d packages.txt
+            fi
             ls
             echo MY PACKAGES: $(cat x${{ matrix.runner-index }})
             #gotestsum --junitfile ${REPORT} -- $PACKAGE_NAMES -v -coverprofile=coverage.txt -covermode=atomic
