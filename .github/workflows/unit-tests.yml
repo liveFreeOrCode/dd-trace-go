@@ -169,7 +169,7 @@ jobs:
             echo PACKAGE NAMES: $(cat packages.txt)
             npkgs=$(cat packages.txt | wc -l)
             echo NUMBER OF PACKAGES: $npkgs
-            psplit=$(($npkgs / ${{ env.total-runners}}))
+            psplit=$(( ($npkgs / ${{ env.total-runners}}) + 1))
             echo PACKAGES PER RUNNER: $psplit
             if [[ $RUNNER_OS == "macOS" ]]; then
                 gsplit -l${psplit} -d packages.txt
@@ -178,7 +178,7 @@ jobs:
             fi
             ls
             echo MY PACKAGES: $(cat x0${{ matrix.runner-index }})
-            #gotestsum --junitfile ${REPORT} -- $PACKAGE_NAMES -v -coverprofile=coverage.txt -covermode=atomic
+            gotestsum --junitfile ${REPORT} -- $(cat x0${{ matrix.runner-index }}) -v -coverprofile=coverage.txt -covermode=atomic
 
       - name: Upload the results to Datadog CI App
         if: always()
