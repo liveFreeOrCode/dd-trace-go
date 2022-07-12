@@ -160,7 +160,7 @@ jobs:
       - name: Install gotestsum
         run: go install gotest.tools/gotestsum@latest
       - name: Mac OS Coreutils
-        if: matrix.os == 'macos-latest'
+        if: matrix.runs-on == 'macos-latest'
         run: brew install coreutils
       - name: "Runner ${{ matrix.runner-index }}: Test Core and Contrib (No Integration Tests)"
         shell: bash
