@@ -166,6 +166,10 @@ jobs:
             echo PACKAGE NAMES: $(cat packages.txt)
             npkgs=$(cat packages.txt | wc -l)
             echo NUMBER OF PACKAGES: $npkgs
+			echo PACKAGES PER RUNNER: $(($npkgs / ${{ env.total-runners}}))
+			split -l10 -d packages.txt
+			ls
+			echo MY PACKAGES: $(cat x${{ matrix.runner-index }})
             #gotestsum --junitfile ${REPORT} -- $PACKAGE_NAMES -v -coverprofile=coverage.txt -covermode=atomic
 
       - name: Upload the results to Datadog CI App
