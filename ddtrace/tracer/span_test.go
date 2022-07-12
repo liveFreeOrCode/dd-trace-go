@@ -93,11 +93,11 @@ func TestTime(t *testing.T) {
 
 func TestTime2(t *testing.T) {
 	for i := 0; i < 1000; i++ {
-		start := time.Now()
+		start := time.Now().UnixNano()
 		wait := time.Millisecond * 2
 		time.Sleep(wait)
-		finish := time.Now()
-		assert.Greater(t, finish-start, wait)
+		finish := time.Now().UnixNano()
+		assert.Greater(t, finish - start, wait)
 	}
 }
 
