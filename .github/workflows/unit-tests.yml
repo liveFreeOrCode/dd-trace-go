@@ -157,14 +157,6 @@ jobs:
           cache: true
       - name: Install gotestsum
         run: go install gotest.tools/gotestsum@latest
-      - uses: chaosaffe/split-tests@v1-alpha.1
-        id: split-tests
-        name: Split tests
-        with:
-          glob: ./**
-          split-total: ${{ env.total-runners }}
-          split-index: ${{ matrix.runner-index }}
-      - run: 'echo "This runner will execute the following tests: ${{ steps.split-tests.outputs.test-suite }}"'
       - name: Runner #${{ matrix.runner-index }}: Test Core and Contrib (No Integration Tests)
         shell: bash
         run: |
