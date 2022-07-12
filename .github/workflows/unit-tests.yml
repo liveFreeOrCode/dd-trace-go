@@ -140,7 +140,7 @@ jobs:
       matrix:
         #runs-on: [ macos-latest, windows-latest ]
         #go-version: ["1.16", "1.17", "1.18"]
-        runs-on: [ macos-latest ]
+        runs-on: [ macos-latest, windows-latest ]
         go-version: ["1.18"]
         runner-index: ${{ fromjson(needs.runner-indexes.outputs.json) }}
       fail-fast: false
@@ -159,6 +159,9 @@ jobs:
           cache: true
       - name: Install gotestsum
         run: go install gotest.tools/gotestsum@latest
+      - name: Mac OS Coreutils
+        if: matrix.os == 'macOS-latest'
+        run: brew install coreutils
       - name: "Runner ${{ matrix.runner-index }}: Test Core and Contrib (No Integration Tests)"
         shell: bash
         run: |
