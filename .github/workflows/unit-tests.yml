@@ -11,7 +11,7 @@ on:
       - "**"
 
 env:
-  total-runners: 1
+  total-runners: 10
 
 jobs:
   runner-indexes:

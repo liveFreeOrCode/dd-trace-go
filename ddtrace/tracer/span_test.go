@@ -97,7 +97,7 @@ func TestTime2(t *testing.T) {
 		wait := time.Millisecond * 2
 		time.Sleep(wait)
 		finish := time.Now().UnixNano()
-		assert.Greater(t, finish - start, wait)
+		assert.GreaterOrEqual(t, finish-start, wait)
 	}
 }
 
