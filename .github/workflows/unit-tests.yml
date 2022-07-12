@@ -138,10 +138,10 @@ jobs:
       - runner-indexes
     strategy:
       matrix:
+        runs-on: [ macos-latest, windows-latest, ubuntu-latest ]
+        go-version: ["1.16", "1.17", "1.18"]
         #runs-on: [ macos-latest, windows-latest ]
-        #go-version: ["1.16", "1.17", "1.18"]
-        runs-on: [ macos-latest, windows-latest ]
-        go-version: ["1.18"]
+        #go-version: ["1.18"]
         runner-index: ${{ fromjson(needs.runner-indexes.outputs.json) }}
       fail-fast: false
     runs-on: ${{ matrix.runs-on }}
@@ -166,18 +166,18 @@ jobs:
         shell: bash
         run: |
             go list ./... | grep -v -e grpc.v12 -e google.golang.org/api -e sarama -e confluent-kafka-go | sort >packages.txt
-            echo PACKAGE NAMES: $(cat packages.txt)
+            #echo PACKAGE NAMES: $(cat packages.txt)
             npkgs=$(cat packages.txt | wc -l)
-            echo NUMBER OF PACKAGES: $npkgs
+            #echo NUMBER OF PACKAGES: $npkgs
             psplit=$(( ($npkgs / ${{ env.total-runners}}) + 1))
-            echo PACKAGES PER RUNNER: $psplit
+            #echo PACKAGES PER RUNNER: $psplit
             if [[ $RUNNER_OS == "macOS" ]]; then
                 gsplit -l${psplit} -d packages.txt
             else
                 split -l${psplit} -d packages.txt
             fi
             ls
-            echo MY PACKAGES: $(cat x0${{ matrix.runner-index }})
+            #echo MY PACKAGES: $(cat x0${{ matrix.runner-index }})
             gotestsum --junitfile ${REPORT} -- $(cat x0${{ matrix.runner-index }}) -v -coverprofile=coverage.txt -covermode=atomic
 
       - name: Upload the results to Datadog CI App
