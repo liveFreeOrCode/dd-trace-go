@@ -3,8 +3,8 @@
 // This product includes software developed at Datadog (https://www.datadoghq.com/).
 // Copyright 2022 Datadog, Inc.
 
-//go:build cgo !windows
-// +build cgo !window
+//go:build cgo && !windows
+// +build cgo,!windows
 
 // Package cmemprof profiles C memory allocations (malloc, calloc, realloc, etc.)
 //
