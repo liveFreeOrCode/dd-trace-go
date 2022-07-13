@@ -81,26 +81,6 @@ func TestSpanFinish(t *testing.T) {
 	assert.True(span.finished)
 }
 
-func TestTime(t *testing.T) {
-	for i := 0; i < 1000; i++ {
-		start := now()
-		wait := time.Millisecond * 2
-		time.Sleep(wait)
-		finish := now()
-		assert.Greater(t, finish-start, int64(wait))
-	}
-}
-
-func TestTime2(t *testing.T) {
-	for i := 0; i < 1000; i++ {
-		start := time.Now().UnixNano()
-		wait := time.Millisecond * 2
-		time.Sleep(wait)
-		finish := time.Now().UnixNano()
-		assert.GreaterOrEqual(t, int64(finish)-int64(start), int64(wait))
-	}
-}
-
 func TestSpanFinishTwice(t *testing.T) {
 	assert := assert.New(t)
 	wait := time.Millisecond * 2
