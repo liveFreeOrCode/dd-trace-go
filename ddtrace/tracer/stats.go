@@ -104,18 +104,9 @@ func (c *concentrator) runFlusher(tick <-chan time.Time) {
 	for {
 		select {
 		case now := <-tick:
-			p := c.flush(now)
-			if len(p.Stats) == 0 {
-				// nothing to flush
-				continue
-			}
-			c.statsd().Incr("datadog.tracer.stats.flush_payloads", nil, 1)
-			c.statsd().Incr("datadog.tracer.stats.flush_buckets", nil, float64(len(p.Stats)))
-			if err := c.cfg.transport.sendStats(&p); err != nil {
-				c.statsd().Incr("datadog.tracer.stats.flush_errors", nil, 1)
-				log.Error("Error sending stats payload: %v", err)
-			}
+			c.flush(now, false)
 		case <-c.stop:
+			c.flush(time.Now(), true)
 			return
 		}
 	}
@@ -166,7 +157,7 @@ func (c *concentrator) Stop() {
 	c.wg.Wait()
 }
 
-func (c *concentrator) flush(timenow time.Time) statsPayload {
+func (c *concentrator) flush(timenow time.Time, force bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -178,7 +169,7 @@ func (c *concentrator) flush(timenow time.Time) statsPayload {
 		Stats:    make([]statsBucket, 0, len(c.buckets)),
 	}
 	for ts, srb := range c.buckets {
-		if ts > now-c.bucketSize {
+		if !force && ts > now-c.bucketSize {
 			// do not flush the current bucket
 			continue
 		}
@@ -186,7 +177,16 @@ func (c *concentrator) flush(timenow time.Time) statsPayload {
 		sp.Stats = append(sp.Stats, srb.Export())
 		delete(c.buckets, ts)
 	}
-	return sp
+	if len(sp.Stats) == 0 {
+		// nothing to flush
+		return
+	}
+	c.statsd().Incr("datadog.tracer.stats.flush_payloads", nil, 1)
+	c.statsd().Incr("datadog.tracer.stats.flush_buckets", nil, float64(len(sp.Stats)))
+	if err := c.cfg.transport.sendStats(&sp); err != nil {
+		c.statsd().Incr("datadog.tracer.stats.flush_errors", nil, 1)
+		log.Error("Error sending stats payload: %v", err)
+	}
 }
 
 // aggregation specifies a uniquely identifiable key under which a certain set
